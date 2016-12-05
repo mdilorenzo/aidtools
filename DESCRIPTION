@@ -1,0 +1,16 @@
+Package: aidtools
+Title: Assorted Functions for Working with Aid and Spatial Data
+Version: 0.0.0.9000
+Authors@R: person("Matthew", "DiLorenzo", email = "matthewdilorenzo@gmail.com", role = c("aut", "cre"))
+Description: This package contains assorted basic functions for working with AidData's core data and geocoded spatial data.
+Depends: R (>= 3.3.1)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+    rgdal,
+    rgeos,
+    foreach,
+    dplyr,
+    tm
+RoxygenNote: 5.0.1.9000
