@@ -54,16 +54,3 @@ propover <- function(p1, p2, i1, i2) {
 
 
 
-
-# 
-# poly2grid <- function(poly, N){
-#   ## Based on http://r-sig-geo.2731867.n2.nabble.com/Split-polygon-by-line-td7588625.html
-#   grid_lines <- gridlines(poly, 
-#                           easts = pretty(bbox(poly)[1, ], n = N),
-#                           norths = pretty(bbox(poly)[2, ], n = N))
-#   poly_int <- gIntersection(poly, grid_lines) # intersect lines with polygon
-#   poly_int <- spTransform(poly_int, CRS(proj4string(poly)))
-#   buff_int <- gBuffer(poly_int, width = 0.0000001) # buffer intersected lines 
-#   gridded_poly <- gDifference(poly, buff_int)    
-# }
-

@@ -14,7 +14,7 @@ texcerpt(text, words, n)
 \item{n}{Return +/- n words around key search words.}
 }
 \description{
-This function extracts words and their surrounding text.
+This function extracts words and their surrounding text. Note that this only words with individual words (or multiple individual words).
 }
 \examples{
 texcerpt(example, words = c("data", "statistic"), n = 10)
