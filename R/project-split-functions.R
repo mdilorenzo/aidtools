@@ -72,9 +72,6 @@ psplityear <- function(proj, loc, amt_var, ID, start_var, end_var){
 
 
 
-
-
-
 #' A Function for Merging World Bank IBRD-IDA Project Amounts with a Shapefile
 #'
 #' Get amount for equal splits of World Bank IBRD-IDA projects across locations. The returned object is the shapefile appended with a column counting dollar amounts of World Bank projects for every year.
@@ -143,8 +140,19 @@ dollars2shape <- function(shapefile,
   coord_points <- SpatialPoints(coords = as.matrix(locyearamt[,c("longitude", "latitude")]),
                                 proj4string = CRS(proj4string(shapefile)))
   
-  ## Generate ID, turn points into data frame
-  coord_points$ID <- over(coord_points, shape_poly)
+  ## Generate ID
+  ID <- over(coord_points, shape_poly)
+  
+  ## Make sure point locations match shape IDs
+  shape_ids <- c()
+  for(i in 1:nrow(shape@data)){
+    shape_ids[i] <- slot(shape, "polygons")[[i]] %>% 
+      slot("ID")
+  }
+  
+  coord_points$ID <- shape_ids[ID]
+  
+  ## Turn points into data frame
   coord_points <- coord_points %>%
     as.data.frame() %>%
     mutate(ID = as.character(ID))
@@ -166,7 +174,6 @@ dollars2shape <- function(shapefile,
   return(shapefile)
   
 }
-
 
 
 
@@ -232,8 +239,19 @@ projects2shape <- function(shapefile,
   coord_points <- SpatialPoints(coords = as.matrix(locyearcount[,c("longitude", "latitude")]),
                                 proj4string = CRS(proj4string(shapefile)))
   
-  ## Generate ID, turn points into data frame
-  coord_points$ID <- over(coord_points, shape_poly)
+  ## Generate ID
+  ID <- over(coord_points, shape_poly)
+  
+  ## Make sure point locations match shape IDs
+  shape_ids <- c()
+  for(i in 1:nrow(shape@data)){
+    shape_ids[i] <- slot(shape, "polygons")[[i]] %>% 
+      slot("ID")
+  }
+  
+  coord_points$ID <- shape_ids[ID]
+  
+  ## Turn points into data frame
   coord_points <- coord_points %>%
     as.data.frame() %>%
     mutate(ID = as.character(ID))
@@ -246,7 +264,8 @@ projects2shape <- function(shapefile,
     spread(key = year, value = new_projects, fill = 0)
   
   ## Rename columns
-  colnames(ID_year_count) <- c("ID", paste("wb_projects", colnames(ID_year_count[,-1]), sep = "_"))
+  colnames(ID_year_count) <- c("ID", 
+                               paste("wb_projects", colnames(ID_year_count[,-1]), sep = "_"))
   
   ## Merge with shapefile
   shapefile@data <- left_join(shapefile@data, ID_year_count, by = "ID")
@@ -255,7 +274,6 @@ projects2shape <- function(shapefile,
   return(shapefile)
   
 }
-
 
 
 
@@ -271,18 +289,24 @@ projects2shape <- function(shapefile,
 #' sectorfilter(sectors = sector, proj = data_name)
 
 sectorfilter <- function(sectors, projects){
+  
     sectors <- as.character(sectors)
     sector_codes <- strsplit(projects$ad_sector_codes, "\\|")
     keep_project <- c()
+    
     for(i in 1:nrow(projects)){
       keep_project[i] <- any(sectors %in% sector_codes[[i]])
     }
+    
     projects <- projects[keep_project, ]
+    
     if(nrow(projects) == 0){
       warning('No projects with matching sectors')
       return(projects)
     } else 
+      
     return(projects)
+    
 }
 
 
@@ -310,6 +334,7 @@ activitysplit <- function(dat){
   
   result$amount <- as.numeric(as.character(result$amount))
   return(result)
+  
 }
 
 
