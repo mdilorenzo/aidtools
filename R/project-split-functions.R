@@ -130,8 +130,15 @@ dollars2shape <- function(shapefile,
     summarise(total_commitments = sum(split_value)) %>%
     ungroup()
   
+  ## Make sure point locations match shape IDs
+  shape_ids <- c()
+  for(i in 1:nrow(shapefile@data)){
+    shape_ids[i] <- slot(shapefile, "polygons")[[i]] %>% 
+      slot("ID")
+  }
+  
   ## Create ID in shapefile
-  shapefile@data$ID <- as.character(rownames(shapefile@data))
+  shapefile@data$ID <- shape_ids
   
   ## Create SpatialPolygons and SpatialPoints objects
   shape_poly <- SpatialPolygons(shapefile@polygons,
@@ -141,16 +148,7 @@ dollars2shape <- function(shapefile,
                                 proj4string = CRS(proj4string(shapefile)))
   
   ## Generate ID
-  ID <- over(coord_points, shape_poly)
-  
-  ## Make sure point locations match shape IDs
-  shape_ids <- c()
-  for(i in 1:nrow(shape@data)){
-    shape_ids[i] <- slot(shape, "polygons")[[i]] %>% 
-      slot("ID")
-  }
-  
-  coord_points$ID <- shape_ids[ID]
+  coord_points$ID <- shape_ids[over(coord_points, shape_poly)]
   
   ## Turn points into data frame
   coord_points <- coord_points %>%
@@ -229,8 +227,15 @@ projects2shape <- function(shapefile,
     summarise(new_projects = n()) %>%
     ungroup()
   
+  ## Make sure point locations match shape IDs
+  shape_ids <- c()
+  for(i in 1:nrow(shapefile@data)){
+    shape_ids[i] <- slot(shapefile, "polygons")[[i]] %>% 
+      slot("ID")
+  }
+  
   ## Create ID in shapefile
-  shapefile@data$ID <- as.character(rownames(shapefile@data))
+  shapefile@data$ID <- shape_ids
   
   ## Create SpatialPolygons and SpatialPoints objects
   shape_poly <- SpatialPolygons(shapefile@polygons,
@@ -240,16 +245,7 @@ projects2shape <- function(shapefile,
                                 proj4string = CRS(proj4string(shapefile)))
   
   ## Generate ID
-  ID <- over(coord_points, shape_poly)
-  
-  ## Make sure point locations match shape IDs
-  shape_ids <- c()
-  for(i in 1:nrow(shape@data)){
-    shape_ids[i] <- slot(shape, "polygons")[[i]] %>% 
-      slot("ID")
-  }
-  
-  coord_points$ID <- shape_ids[ID]
+  coord_points$ID <- shape_ids[over(coord_points, shape_poly)]
   
   ## Turn points into data frame
   coord_points <- coord_points %>%
