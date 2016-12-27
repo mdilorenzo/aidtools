@@ -5,7 +5,7 @@
 \title{A Function for Merging World Bank IBRD-IDA Project Amounts with a Shapefile}
 \usage{
 dollars2shape(shapefile, max_precision = 3, amt_var = "commitments",
-  sectors = "all")
+  sectors = "all", project_status = c("Implementation", "Completion"))
 }
 \arguments{
 \item{shapefile}{Shapefile to append data slot with columns for financial amounts by year.}
@@ -13,6 +13,8 @@ dollars2shape(shapefile, max_precision = 3, amt_var = "commitments",
 \item{max_precision}{Maximum precision score of project locations to include.}
 
 \item{amt_var}{Desired financial amounts: "commitments" or "disbursements".}
+
+\item{project_status}{Vector containing "Implementation" and/or "Completion". Both by default.}
 
 \item{sector}{Sectors to include. Default is "all" which returns all sectors.}
 }

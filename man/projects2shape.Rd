@@ -4,7 +4,8 @@
 \alias{projects2shape}
 \title{A Function for Counting World Bank IBRD-IDA Projects}
 \usage{
-projects2shape(shapefile, max_precision = 3, sectors = "all")
+projects2shape(shapefile, max_precision = 3, sectors = "all",
+  project_status = c("Implementation", "Completion"))
 }
 \arguments{
 \item{shapefile}{Shapefile to append data slot with columns for financial amounts by year.}
@@ -12,6 +13,8 @@ projects2shape(shapefile, max_precision = 3, sectors = "all")
 \item{max_precision}{Maximum precision score of project locations to include.}
 
 \item{sectors}{Sectors to include as numeric vector. Default is "all" which returns all sectors.}
+
+\item{project_status}{Vector containing "Implementation" and/or "Completion". Both by default.}
 }
 \description{
 Get count of new World Bank IBRD-IDA projects across locations by year. The returned object is the shapefile appended with a column counting new World Bank projects for every year.

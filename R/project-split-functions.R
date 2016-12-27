@@ -79,6 +79,7 @@ psplityear <- function(proj, loc, amt_var, ID, start_var, end_var){
 #' @param max_precision Maximum precision score of project locations to include.
 #' @param amt_var Desired financial amounts: "commitments" or "disbursements".
 #' @param sector Sectors to include. Default is "all" which returns all sectors.
+#' @param project_status Vector containing "Implementation" and/or "Completion". Both by default.
 #' @keywords 
 #' @export
 #' @examples
@@ -87,7 +88,8 @@ psplityear <- function(proj, loc, amt_var, ID, start_var, end_var){
 dollars2shape <- function(shapefile, 
                           max_precision = 3,
                           amt_var = "commitments",
-                          sectors = "all") {
+                          sectors = "all",
+                          project_status = c("Implementation", "Completion")) {
   
   ## Create temporary file
   wb_dir <- tempfile()
@@ -104,6 +106,9 @@ dollars2shape <- function(shapefile,
   
   ## Delete temporary file
   unlink(wb_dir)
+  
+  ## Filter based on status
+  proj <- proj %>% filter(status %in% project_status)
   
   ## Assign some shortcuts
   id <- "project_id"
@@ -181,6 +186,7 @@ dollars2shape <- function(shapefile,
 #' @param shapefile Shapefile to append data slot with columns for financial amounts by year.
 #' @param max_precision Maximum precision score of project locations to include.
 #' @param sectors Sectors to include as numeric vector. Default is "all" which returns all sectors.
+#' @param project_status Vector containing "Implementation" and/or "Completion". Both by default.
 #' @keywords 
 #' @export
 #' @examples
@@ -188,7 +194,8 @@ dollars2shape <- function(shapefile,
 
 projects2shape <- function(shapefile, 
                            max_precision = 3,
-                           sectors = "all") {
+                           sectors = "all",
+                           project_status = c("Implementation", "Completion")) {
   
   ## Create temporary file
   wb_dir <- tempfile()
@@ -205,7 +212,10 @@ projects2shape <- function(shapefile,
   
   ## Delete temporary file
   unlink(wb_dir)
-
+  
+  ## Filter based on status
+  proj <- proj %>% filter(status %in% project_status)
+  
   ## Assign a shortcut
   id <- "project_id"
   
@@ -214,7 +224,7 @@ projects2shape <- function(shapefile,
     proj <- sectorfilter(sectors = sectors, projects = proj)
     loc <- loc[loc$project_id %in% unique(proj$project_id), ]
   }
-
+  
   
   ## Get actual start year, merge with locations,
   ## get location year amounts, filter by precision
@@ -270,8 +280,6 @@ projects2shape <- function(shapefile,
   return(shapefile)
   
 }
-
-
 
 
 
