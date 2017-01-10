@@ -196,7 +196,7 @@ projects2shape <- function(shapefile,
                            max_precision = 3,
                            sectors = "all",
                            project_status = c("Implementation", "Completion")) {
-  
+
   ## Create temporary file
   wb_dir <- tempfile()
   url <- "http://tinyurl.com/gob7w9o"
@@ -225,17 +225,17 @@ projects2shape <- function(shapefile,
     loc <- loc[loc$project_id %in% unique(proj$project_id), ]
   }
   
-  
-  ## Get actual start year, merge with locations,
-  ## get location year amounts, filter by precision
+
+    ## Get actual start year, merge with locations,
+  ## get location year counts, filter by precision
   locyearcount <- proj %>%
-    mutate(year = as.numeric(substr(start_actual_isodate, 1, 4))) %>%
-    select(project_id, year) %>%
-    right_join(loc, by = id) %>%
-    filter(precision_code <= max_precision) %>%
-    group_by(longitude, latitude, year) %>%
-    summarise(new_projects = n()) %>%
-    ungroup()
+    dplyr::mutate(year = as.numeric(substr(start_actual_isodate, 1, 4))) %>%
+    dplyr::select(project_id, year) %>%
+    dplyr::right_join(loc, by = id) %>%
+    dplyr::filter(precision_code <= max_precision) %>%
+    dplyr::select(project_id, year, longitude, latitude) %>%
+    dplyr::ungroup()
+  
   
   ## Make sure point locations match shape IDs
   shape_ids <- c()
@@ -255,19 +255,13 @@ projects2shape <- function(shapefile,
                                 proj4string = CRS(proj4string(shapefile)))
   
   ## Generate ID
-  coord_points$ID <- shape_ids[over(coord_points, shape_poly)]
-  
-  ## Turn points into data frame
-  coord_points <- coord_points %>%
-    as.data.frame() %>%
-    mutate(ID = as.character(ID))
+  locyearcount$ID <- shape_ids[over(coord_points, shape_poly)]
   
   ## Merge with location-year-amounts, summarise by ID
   ID_year_count <- locyearcount %>%
-    left_join(coord_points, by = c("longitude", "latitude")) %>%
-    group_by(ID, year) %>%
-    summarise(new_projects = sum(new_projects)) %>%
-    spread(key = year, value = new_projects, fill = 0)
+    dplyr::group_by(ID, year) %>%
+    dplyr::summarise(new_projects = length(unique(project_id))) %>%
+    tidyr::spread(key = year, value = new_projects, fill = 0)
   
   ## Rename columns
   colnames(ID_year_count) <- c("ID", 
