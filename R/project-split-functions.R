@@ -310,7 +310,7 @@ sectorfilter <- function(sectors, projects){
 
 #' Split AidData Project Commitments Equally Across Activities
 #'
-#' Returns subset of proj object of rows containing sector codes in the sectors argument 
+#' Splits AidData project commitment amounts evenly across activities. 
 #' @param dat Name of object containing AidData core data set
 #' @export
 #' @examples
@@ -336,3 +336,19 @@ activitysplit <- function(dat){
 }
 
 
+
+#' Count Activities in an AidData Project
+#'
+#' Returns a count of unique activities tagged to a project.
+#' @param project Row and column indices of AidData project. 
+#' @export
+#' @examples
+#' activity_counter(project = aiddata_core$aiddata_activity_codes[1])
+
+activity_counter <- function(project){
+  n_act <- strsplit(project, "|", fixed = TRUE) %>%
+    unlist() %>%
+    length()
+  return(n_act)
+} %>%
+  Vectorize()
