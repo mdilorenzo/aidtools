@@ -2,7 +2,7 @@
 #'
 #' Get project-level estimates of contributions to SDGs.
 #' @param dat Data frame containing projects and financial amounts. Name of activity codes variable assumed to be "aiddata_activity_codes" and financial amount variable "commitment_amount_usd_constant".
-#' @param single_activity Logical value indicating whether the projects in the data frame have only a single activity. Can use activity_counter() to pre-filter data.
+#' @param single_activity Logical value indicating whether all the projects in the data frame have only a single activity. Can use activity_counter() to pre-filter data.
 #' @keywords 
 #' @export
 #' @examples
@@ -10,12 +10,7 @@
 
 sdg_coder <- function(dat, single_activity = FALSE){
   
-  #goal_weights <- paste("~/Dropbox/aiddata/tasks/sdg-method/activity-to-target-coding/",
-  #                      "activities-to-goal-weights.csv", sep = "")
-  
-  #wts <- read.csv(goal_weights, stringsAsFactors = FALSE) %>%
-  #  mutate(activity_code = as.character(activity_code))
-  
+  ## Check single_activity status. If TRUE, simple merge and multiplier.
   if(single_activity == TRUE){
     
     ## Rename activity code variable to match
