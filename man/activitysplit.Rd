@@ -10,7 +10,7 @@ activitysplit(dat)
 \item{dat}{Name of object containing AidData core data set}
 }
 \description{
-Returns subset of proj object of rows containing sector codes in the sectors argument
+Splits AidData project commitment amounts evenly across activities.
 }
 \examples{
 activitysplit(dat = dat)
