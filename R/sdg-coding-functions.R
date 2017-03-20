@@ -8,7 +8,22 @@
 #' @examples
 #' sdg_coder(dat = aiddata_core_research_release, single_activity = FALSE)
 
-sdg_coder <- function(dat, single_activity = FALSE){
+sdg_coder <- function(dat, single_activity = FALSE, distr_all = FALSE, multi_count = FALSE){
+  
+  ## Logical check of whether to distribute entire value of project
+  ## using Jennifer method
+  if(distr_all == TRUE){
+    
+    wts <- j_wts
+    
+  }
+  
+  ## Logical check of whether to double count rather than splitting
+  if(multi_count == TRUE){
+    
+    wts[wts > 0] <- 1
+    
+  }
   
   ## Check single_activity status. If TRUE, simple merge and multiplier.
   if(single_activity == TRUE){

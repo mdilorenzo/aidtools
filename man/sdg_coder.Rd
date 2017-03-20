@@ -4,15 +4,16 @@
 \alias{sdg_coder}
 \title{A Function for Getting SDG Estimates for Projects with AidData Activity Codes}
 \usage{
-sdg_coder(dat, single_activity = FALSE)
+sdg_coder(dat, single_activity = FALSE, distr_all = FALSE,
+  multi_count = FALSE)
 }
 \arguments{
 \item{dat}{Data frame containing projects and financial amounts. Name of activity codes variable assumed to be "aiddata_activity_codes" and financial amount variable "commitment_amount_usd_constant".}
 
-\item{single_activity}{Logical value indicating whether the projects in the data frame have only a single activity. Can use activity_counter() to pre-filter data.}
+\item{single_activity}{Logical value indicating whether all the projects in the data frame have only a single activity. Can use activity_counter() to pre-filter data. By default the function can deal with cases that have single or multiple activities, but applying the function to cases with single activities takes more time than is necessary.}
 }
 \description{
-Get amount for equal splits of projects across locations
+Get project-level estimates of contributions to SDGs.
 }
 \examples{
 sdg_coder(dat = aiddata_core_research_release, single_activity = FALSE)
