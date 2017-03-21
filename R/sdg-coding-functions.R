@@ -14,15 +14,22 @@ sdg_coder <- function(dat, single_activity = FALSE, distr_all = FALSE, multi_cou
   ## using Jennifer method
   if(distr_all == TRUE){
     
-    wts <- j_wts
+    ## Merge, multiply by dollar amounts, select
+    merged <- left_join(dat, j_wts, by = "aiddata_activity_codes") %>%
+      mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
+      select(aiddata_id, goal_1:goal_17)
+    
+    merged[is.na(merged)] <- 0
+    
+    return(merged)
     
   }
   
   ## Logical check of whether to double count rather than splitting
   if(multi_count == TRUE){
     
-    wts[wts > 0] <- 1
-    
+    wts[,-1] <- apply(wts[,-1], 2, function(x) ifelse(x > 0, 1, 0))
+
   }
   
   ## Check single_activity status. If TRUE, simple merge and multiplier.
