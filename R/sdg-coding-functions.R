@@ -18,6 +18,10 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
   if(coalesced_purpose == TRUE){
     
     dat$coalesced_purpose_code <- as.character(dat$coalesced_purpose_code)
+    
+    ## Renaming variables in p_wts
+    colnames(p_wts) <- c("coalesced_purpose_code", paste("goal", 1:17, sep = "_"))
+  
     p_wts$coalesced_purpose_code <- as.character(p_wts$coalesced_purpose_code)
     
     ## Merge, multiply by dollar amounts, select
@@ -124,6 +128,8 @@ target_coder <- function(dat, single_activity = FALSE,
   
   ## Logical check of whether to use coalesced purpose codes
   if(coalesced_purpose == TRUE){
+    
+    colnames(pt_wts) <- c("coalesced_purpose_code", colnames(at_wts[,-1]))
     
     dat$coalesced_purpose_code <- as.character(dat$coalesced_purpose_code)
     pt_wts$coalesced_purpose_code <- as.character(pt_wts$coalesced_purpose_code)
