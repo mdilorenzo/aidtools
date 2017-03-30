@@ -7,6 +7,7 @@
 #' @export
 #' @examples
 #' sdg_coder(dat = aiddata_core_research_release, single_activity = FALSE)
+library(aidtools)
 
 sdg_coder <- function(dat, single_activity = FALSE, distr_all = FALSE, multi_count = FALSE){
   
