@@ -1,22 +1,28 @@
 #' A Function for Getting SDG Estimates for Projects with AidData Activity Codes
 #'
-#' Get project-level estimates of contributions to SDGs.
+#' Get project-level estimates of contributions to SDGs. This function requires three input variables with specific names: aiddata_id, aiddata_activity_codes, and commitment_amount_usd_constant. If coalesced_purpose == TRUE, then there should be a column called coalesced_purpose_code.
 #' @param dat Data frame containing projects and financial amounts. Name of activity codes variable assumed to be "aiddata_activity_codes" and financial amount variable "commitment_amount_usd_constant".
-#' @param single_activity Logical value indicating whether all the projects in the data frame have only a single activity. Can use activity_counter() to pre-filter data. By default the function can deal with cases that have single or multiple activities, but applying the function to cases with single activities takes more time than is necessary. 
+#' @param single_activity Logical value indicating whether all the projects in the data frame have only a single activity. Can use activity_counter() to pre-filter data. By default the function can deal with cases that have single or multiple activities, but applying the function to cases with single activities takes more time than is necessary. If TRUE, run on subset of data without multiple activity codes and bind with other data later. 
+#' @param coalesced_purpose Logical value indicating whether function should use alternative method of coalesced purpose code to SDG weights (p_wts). If TRUE, run on subset of data without activity codes and bind with other data later. 
 #' @keywords 
 #' @export
 #' @examples
 #' sdg_coder(dat = aiddata_core_research_release, single_activity = FALSE)
-library(aidtools)
 
-sdg_coder <- function(dat, single_activity = FALSE, distr_all = FALSE, multi_count = FALSE){
+sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
   
-  ## Logical check of whether to distribute entire value of project
-  ## using Jennifer method
-  if(distr_all == TRUE){
+  ## Make sure dollar amounts are numeric
+  dat$commitment_amount_usd_constant <- as.numeric(as.character(dat$commitment_amount_usd_constant))
+  
+  
+  ## Logical check of whether to use coalesced purpose codes
+  if(coalesced_purpose == TRUE){
+    
+    dat$coalesced_purpose_code <- as.character(dat$coalesced_purpose_code)
+    p_wts$coalesced_purpose_code <- as.character(p_wts$coalesced_purpose_code)
     
     ## Merge, multiply by dollar amounts, select
-    merged <- left_join(dat, j_wts, by = "aiddata_activity_codes") %>%
+    merged <- left_join(dat, p_wts, by = "coalesced_purpose_code") %>%
       mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
       select(aiddata_id, goal_1:goal_17)
     
@@ -24,13 +30,6 @@ sdg_coder <- function(dat, single_activity = FALSE, distr_all = FALSE, multi_cou
     
     return(merged)
     
-  }
-  
-  ## Logical check of whether to double count rather than splitting
-  if(multi_count == TRUE){
-    
-    wts[,-1] <- apply(wts[,-1], 2, function(x) ifelse(x > 0, 1, 0))
-
   }
   
   ## Check single_activity status. If TRUE, simple merge and multiplier.
@@ -98,4 +97,7 @@ sdg_coder <- function(dat, single_activity = FALSE, distr_all = FALSE, multi_cou
   }
   
 }
+
+
+
 
