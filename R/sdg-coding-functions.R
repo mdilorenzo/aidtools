@@ -106,17 +106,17 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
 
 #' A Function for Getting Target-level SDG Estimates for Projects with AidData Activity Codes
 #'
-#' Get project-level estimates of contributions to SDGs. This function requires three input variables with specific names: aiddata_id, aiddata_activity_codes, and commitment_amount_usd_constant. If coalesced_purpose == TRUE, then there should be a column called coalesced_purpose_code.
+#' Get project-level estimates of contributions to SDG targets. This function requires three input variables with specific names: aiddata_id, aiddata_activity_codes, and commitment_amount_usd_constant. If coalesced_purpose == TRUE, then there should be a column called coalesced_purpose_code.
 #' @param dat Data frame containing projects and financial amounts. Name of activity codes variable assumed to be "aiddata_activity_codes" and financial amount variable "commitment_amount_usd_constant".
 #' @param single_activity Logical value indicating whether all the projects in the data frame have only a single activity. Can use activity_counter() to pre-filter data. By default the function can deal with cases that have single or multiple activities, but applying the function to cases with single activities takes more time than is necessary. If TRUE, run on subset of data without multiple activity codes and bind with other data later. 
 #' @param coalesced_purpose Logical value indicating whether function should use alternative method of coalesced purpose code to SDG weights (p_wts). If TRUE, run on subset of data without activity codes and bind with other data later. 
 #' @keywords 
-#' @export
+#' @export 
 #' @examples
-#' sdg_target_coder(dat = aiddata_core_research_release, single_activity = FALSE)
+#' sdg_target_coder(dat = aiddata_core_research_release)
 
 
-sdg_target_coder <- function(dat, single_activity = FALSE, 
+target_coder <- function(dat, single_activity = FALSE, 
                              coalesced_purpose = FALSE){
   
   ## Make sure dollar amounts are numeric
