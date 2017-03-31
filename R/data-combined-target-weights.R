@@ -3,12 +3,12 @@
 #'
 #' @docType data
 #'
-#' @usage data(wts)
+#' @usage data(combined_t_wts)
 #'
 #' @format 
 #'
 #' @keywords datasets
 #'
 #' @examples
-#' data(wts)
-"wts"
+#' data(combined_t_wts)
+"combined_t_wts"

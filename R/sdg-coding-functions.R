@@ -19,13 +19,16 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
     
     dat$coalesced_purpose_code <- as.character(dat$coalesced_purpose_code)
     
-    ## Renaming variables in p_wts
-    colnames(p_wts) <- c("coalesced_purpose_code", paste("goal", 1:17, sep = "_"))
-  
-    p_wts$coalesced_purpose_code <- as.character(p_wts$coalesced_purpose_code)
+    ## Renaming variables
+    combined_g_wts <- combined_g_wts %>% 
+      filter(method_goal == "P") %>%
+      select(-method_goal) %>%
+      rename(coalesced_purpose_code = code_goal)
+    
+    combined_g_wts$coalesced_purpose_code <- as.character(combined_g_wts$coalesced_purpose_code)
     
     ## Merge, multiply by dollar amounts, select
-    merged <- left_join(dat, p_wts, by = "coalesced_purpose_code") %>%
+    merged <- left_join(dat, combined_g_wts, by = "coalesced_purpose_code") %>%
       mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
       select(aiddata_id, goal_1:goal_17)
     
@@ -39,11 +42,14 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
   if(single_activity == TRUE){
     
     ## Rename activity code variable to match
-    wts <- wts %>%
-      rename(aiddata_activity_codes = activity_code)
+    ## Renaming variables
+    combined_g_wts <- combined_g_wts %>% 
+      filter(method_goal == "A") %>%
+      select(-method_goal) %>%
+      rename(aiddata_activity_codes = code_goal)
     
     ## Merge, multiply by dollar amounts, select
-    merged <- left_join(dat, wts, by = "aiddata_activity_codes") %>%
+    merged <- left_join(dat, combined_g_wts, by = "aiddata_activity_codes") %>%
       mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
       select(aiddata_id, goal_1:goal_17)
     
@@ -55,6 +61,12 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
   
   ## If single_activity == FALSE, split projects up by activities
   if(single_activity == FALSE){
+    
+    
+    combined_g_wts <- combined_g_wts %>% 
+      filter(method_goal == "A") %>%
+      select(-method_goal) %>%
+      rename(aiddata_activity_codes = code_goal)
     
     ## Loop through rows
     result <- foreach(i = 1:nrow(dat), .combine = "rbind") %do% {
@@ -75,9 +87,9 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
       }
       
       ## Create a matrix of the activity-to-goal weights for relevant activities
-      links <- wts %>%
-        filter(activity_code %in% act) %>%
-        select(-activity_code)
+      links <- combined_g_wts %>%
+        filter(aiddata_activity_codes %in% act) %>%
+        select(-aiddata_activity_codes)
       
       ## If no matches, create vector of zeroes of length 17
       if(nrow(links) < 1){
@@ -120,8 +132,9 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
 #' sdg_target_coder(dat = aiddata_core_research_release)
 
 
-target_coder <- function(dat, single_activity = FALSE, 
-                             coalesced_purpose = FALSE){
+target_coder <- function(dat, 
+                         single_activity = FALSE, 
+                         coalesced_purpose = FALSE){
   
   ## Make sure dollar amounts are numeric
   dat$commitment_amount_usd_constant <- as.numeric(as.character(dat$commitment_amount_usd_constant))
@@ -129,13 +142,16 @@ target_coder <- function(dat, single_activity = FALSE,
   ## Logical check of whether to use coalesced purpose codes
   if(coalesced_purpose == TRUE){
     
-    colnames(pt_wts) <- c("coalesced_purpose_code", colnames(at_wts[,-1]))
-    
+    combined_t_wts <- combined_t_wts %>% 
+      filter(method_target == "P") %>%
+      select(-method_target) %>%
+      rename(coalesced_purpose_code = code_target)
+
     dat$coalesced_purpose_code <- as.character(dat$coalesced_purpose_code)
-    pt_wts$coalesced_purpose_code <- as.character(pt_wts$coalesced_purpose_code)
+    combined_t_wts$coalesced_purpose_code <- as.character(combined_t_wts$coalesced_purpose_code)
     
     ## Merge, multiply by dollar amounts, select
-    merged <- left_join(dat, pt_wts, by = "coalesced_purpose_code") %>%
+    merged <- left_join(dat, combined_t_wts, by = "coalesced_purpose_code") %>%
       mutate_each(funs(.*commitment_amount_usd_constant), starts_with("t_")) %>%
       select(aiddata_id, t_1.1:t_17.19)
     
@@ -148,14 +164,15 @@ target_coder <- function(dat, single_activity = FALSE,
   ## Check single_activity status. If TRUE, simple merge and multiplier.
   if(single_activity == TRUE){
     
-    ## Rename activity code variable to match
-    at_wts <- at_wts %>%
-      rename(aiddata_activity_codes = activity_code)
+    combined_t_wts <- combined_t_wts %>% 
+      filter(method_target == "A") %>%
+      select(-method_target) %>%
+      rename(aiddata_activity_codes = code_target)
     
     ## Merge, multiply by dollar amounts, select
-    merged <- left_join(dat, at_wts, by = "aiddata_activity_codes") %>%
-      mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
-      select(aiddata_id, goal_1:goal_17)
+    merged <- left_join(dat, combined_t_wts, by = "aiddata_activity_codes") %>%
+      mutate_each(funs(.*commitment_amount_usd_constant), starts_with("t_")) %>%
+      select(aiddata_id, t_1.1:t_17.19)
     
     merged[is.na(merged)] <- 0
     
@@ -165,6 +182,11 @@ target_coder <- function(dat, single_activity = FALSE,
   
   ## If single_activity == FALSE, split projects up by activities
   if(single_activity == FALSE){
+    
+    combined_t_wts <- combined_t_wts %>% 
+      filter(method_target == "A") %>%
+      select(-method_target) %>%
+      rename(aiddata_activity_codes = code_target)
     
     ## Loop through rows
     result <- foreach(i = 1:nrow(dat), .combine = "rbind") %do% {
@@ -185,15 +207,15 @@ target_coder <- function(dat, single_activity = FALSE,
       }
       
       ## Create a matrix of the activity-to-goal weights for relevant activities
-      links <- at_wts %>%
-        filter(activity_code %in% act) %>%
-        select(-activity_code)
+      links <- combined_t_wts %>%
+        filter(aiddata_activity_codes %in% act) %>%
+        select(-aiddata_activity_codes)
       
       ## If no matches, create vector of zeroes of length 17
       if(nrow(links) < 1){
         
         links <- matrix(rep(0, 169), nrow = 1, ncol = 169)
-        colnames(links) <- colnames(at_wts[,-1])
+        colnames(links) <- colnames(combined_t_wts[,-1])
         
       }
       
@@ -210,5 +232,8 @@ target_coder <- function(dat, single_activity = FALSE,
   }
   
 }
+
+
+
 
 
