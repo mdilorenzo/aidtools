@@ -5,7 +5,8 @@
 \title{A Function for Counting World Bank IBRD-IDA Projects}
 \usage{
 projects2shape(shapefile, max_precision = 3, sectors = "all",
-  project_status = c("Implementation", "Completion"))
+  project_status = c("Implementation", "Completion"), fetch = TRUE,
+  projects = NA, locations = NA)
 }
 \arguments{
 \item{shapefile}{Shapefile to append data slot with columns for financial amounts by year.}

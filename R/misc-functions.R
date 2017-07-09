@@ -53,4 +53,39 @@ propover <- function(p1, p2, i1, i2) {
 }
 
 
+#' A Function for Matching Text with Exclusions
+#'
+#'  text_matcher() returns logical vector indicating whether each element in x matches terms included in include_text. If exclude_text (character vector of words) is nonempty, text_matcher() first filters out any of the terms included in exclude_text before matching the include_text
+#' @param x Character vector containing text to search.
+#' @param include_text Character vector containing terms to find.
+#' @param exclude_text Character vector containing terms to exclude. Defaults to NULL. If exclude_text (character vector of words) is nonempty, text_matcher() first filters out any of the terms included in exclude_text before matching the include_text
+#' @param ignore_case logical. Sets value of ignore.case in gsub and grepl.
+#' @keywords 
+#' @export
+#' @examples
+#' textmatcher(x = c("hello", "not hello"), include_text = "hello", exclude_text = "not hello", ignore_case = TRUE)
 
+text_matcher <- function(x, 
+                         include_text, 
+                         exclude_text = NULL,
+                         ignore_case = TRUE) {
+  
+  description <- x
+  include_text <- paste(include_text, collapse = "|")
+  exclude_text <- paste(exclude_text, collapse = "|")
+  
+  if(nchar(exclude_text) > 0) {
+    
+    description <- gsub(exclude_text,
+                        "",
+                        description,
+                        ignore.case = ignore_case)
+  }
+  
+  include_match <- grepl(include_text,
+                         description,
+                         ignore.case = ignore_case)
+  
+  include_match
+  
+}

@@ -80,6 +80,7 @@ psplityear <- function(proj, loc, amt_var, ID, start_var, end_var){
 #' @param amt_var Desired financial amounts: "commitments" or "disbursements".
 #' @param sector Sectors to include. Default is "all" which returns all sectors.
 #' @param project_status Vector containing "Implementation" and/or "Completion". Both by default.
+#' @param fetch Defaults to TRUE. If TRUE, gets World Bank IBRD-IDA from AidData website. If FALSE, user needs to supply 2 data frames as objects: projects and locations.
 #' @keywords 
 #' @export
 #' @examples
@@ -89,8 +90,12 @@ dollars2shape <- function(shapefile,
                           max_precision = 3,
                           amt_var = "commitments",
                           sectors = "all",
-                          project_status = c("Implementation", "Completion")) {
+                          project_status = c("Implementation", "Completion"),
+                          fetch = TRUE,
+                          projects = NA,
+                          locations = NA) {
   
+  if(fetch == TRUE){
   ## Create temporary file
   wb_dir <- tempfile()
   url <- "http://tinyurl.com/gob7w9o"
@@ -106,6 +111,16 @@ dollars2shape <- function(shapefile,
   
   ## Delete temporary file
   unlink(wb_dir)
+  }
+
+  if(fetch == FALSE){
+    
+    proj <- projects
+    loc <- locations
+    
+  }
+  
+  
   
   ## Filter based on status
   proj <- proj %>% filter(status %in% project_status)
@@ -195,23 +210,35 @@ dollars2shape <- function(shapefile,
 projects2shape <- function(shapefile, 
                            max_precision = 3,
                            sectors = "all",
-                           project_status = c("Implementation", "Completion")) {
+                           project_status = c("Implementation", "Completion"),
+                           fetch = TRUE,
+                           projects = NA,
+                           locations = NA) {
 
-  ## Create temporary file
-  wb_dir <- tempfile()
-  url <- "http://tinyurl.com/gob7w9o"
-  download.file(url, wb_dir)
+  if(fetch == TRUE){
+    ## Create temporary file
+    wb_dir <- tempfile()
+    url <- "http://tinyurl.com/gob7w9o"
+    download.file(url, wb_dir)
+    
+    ## Filepaths
+    proj_dir <- "WorldBank_GeocodedResearchRelease_Level1_v1.4.1/data/projects.csv"
+    loc_dir <- "WorldBank_GeocodedResearchRelease_Level1_v1.4.1/data/locations.csv"
+    
+    ## Read as .csv
+    proj <- read.csv(unz(wb_dir, proj_dir), stringsAsFactors = FALSE)
+    loc <- read.csv(unz(wb_dir, loc_dir), stringsAsFactors = FALSE)
+    
+    ## Delete temporary file
+    unlink(wb_dir)
+  }
   
-  ## Filepaths
-  proj_dir <- "WorldBank_GeocodedResearchRelease_Level1_v1.4.1/data/projects.csv"
-  loc_dir <- "WorldBank_GeocodedResearchRelease_Level1_v1.4.1/data/locations.csv"
-  
-  ## Read as .csv
-  proj <- read.csv(unz(wb_dir, proj_dir), stringsAsFactors = FALSE)
-  loc <- read.csv(unz(wb_dir, loc_dir), stringsAsFactors = FALSE)
-  
-  ## Delete temporary file
-  unlink(wb_dir)
+  if(fetch == FALSE){
+    
+    proj <- projects
+    loc <- locations
+    
+  }
   
   ## Filter based on status
   proj <- proj %>% filter(status %in% project_status)
