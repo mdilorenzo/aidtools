@@ -29,7 +29,9 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
     
     ## Merge, multiply by dollar amounts, select
     merged <- left_join(dat, combined_g_wts, by = "coalesced_purpose_code") %>%
-      mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
+      #mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
+      mutate_at(vars(starts_with("goal_")),
+                funs(.*commitment_amount_usd_constant)) %>%
       select(aiddata_id, goal_1:goal_17)
     
     merged[is.na(merged)] <- 0
@@ -50,7 +52,9 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
     
     ## Merge, multiply by dollar amounts, select
     merged <- left_join(dat, combined_g_wts, by = "aiddata_activity_codes") %>%
-      mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
+      #mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
+      mutate_at(vars(starts_with("goal_")),
+                funs(.*commitment_amount_usd_constant)) %>%
       select(aiddata_id, goal_1:goal_17)
     
     merged[is.na(merged)] <- 0
@@ -152,7 +156,9 @@ target_coder <- function(dat,
     
     ## Merge, multiply by dollar amounts, select
     merged <- left_join(dat, combined_t_wts, by = "coalesced_purpose_code") %>%
-      mutate_each(funs(.*commitment_amount_usd_constant), starts_with("t_")) %>%
+      #mutate_each(funs(.*commitment_amount_usd_constant), starts_with("t_")) %>%
+      mutate_at(vars(starts_with("t_")),
+                funs(.*commitment_amount_usd_constant)) %>%
       select(aiddata_id, t_1.1:t_17.19)
     
     merged[is.na(merged)] <- 0
@@ -171,7 +177,9 @@ target_coder <- function(dat,
     
     ## Merge, multiply by dollar amounts, select
     merged <- left_join(dat, combined_t_wts, by = "aiddata_activity_codes") %>%
-      mutate_each(funs(.*commitment_amount_usd_constant), starts_with("t_")) %>%
+      #mutate_each(funs(.*commitment_amount_usd_constant), starts_with("t_")) %>%
+      mutate_at(vars(starts_with("t_")),
+                funs(.*commitment_amount_usd_constant)) %>%
       select(aiddata_id, t_1.1:t_17.19)
     
     merged[is.na(merged)] <- 0
