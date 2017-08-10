@@ -9,10 +9,14 @@
 #' @examples
 #' sdg_coder(dat = aiddata_core_research_release, single_activity = FALSE)
 
-sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
+sdg_coder <- function(dat, 
+                      single_activity = FALSE, 
+                      coalesced_purpose = FALSE){
   
   ## Make sure dollar amounts are numeric
-  dat$commitment_amount_usd_constant <- as.numeric(as.character(dat$commitment_amount_usd_constant))
+  dat$commitment_amount_usd_constant <- as.numeric(
+    as.character(dat$commitment_amount_usd_constant)
+    )
   
   ## Logical check of whether to use coalesced purpose codes
   if(coalesced_purpose == TRUE){
@@ -25,11 +29,15 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
       select(-method_goal) %>%
       rename(coalesced_purpose_code = code_goal)
     
-    combined_g_wts$coalesced_purpose_code <- as.character(combined_g_wts$coalesced_purpose_code)
+    combined_g_wts$coalesced_purpose_code <- as.character(
+      combined_g_wts$coalesced_purpose_code
+      )
     
     ## Merge, multiply by dollar amounts, select
-    merged <- left_join(dat, combined_g_wts, by = "coalesced_purpose_code") %>%
-      #mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
+    merged <- left_join(dat, combined_g_wts, 
+                        by = "coalesced_purpose_code") %>%
+      #mutate_each(funs(.*commitment_amount_usd_constant), 
+      #            starts_with("goal_")) %>%
       mutate_at(vars(starts_with("goal_")),
                 funs(.*commitment_amount_usd_constant)) %>%
       select(aiddata_id, goal_1:goal_17)
@@ -51,8 +59,10 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
       rename(aiddata_activity_codes = code_goal)
     
     ## Merge, multiply by dollar amounts, select
-    merged <- left_join(dat, combined_g_wts, by = "aiddata_activity_codes") %>%
-      #mutate_each(funs(.*commitment_amount_usd_constant), starts_with("goal_")) %>%
+    merged <- left_join(dat, combined_g_wts, 
+                        by = "aiddata_activity_codes") %>%
+      # mutate_each(funs(.*commitment_amount_usd_constant), 
+      #             starts_with("goal_")) %>%
       mutate_at(vars(starts_with("goal_")),
                 funs(.*commitment_amount_usd_constant)) %>%
       select(aiddata_id, goal_1:goal_17)
@@ -65,7 +75,6 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
   
   ## If single_activity == FALSE, split projects up by activities
   if(single_activity == FALSE){
-    
     
     combined_g_wts <- combined_g_wts %>% 
       filter(method_goal == "A") %>%
@@ -90,7 +99,7 @@ sdg_coder <- function(dat, single_activity = FALSE, coalesced_purpose = FALSE){
         
       }
       
-      ## Create a matrix of the activity-to-goal weights for relevant activities
+      ## Create matrix of activity-to-goal weights for relevant activities
       links <- combined_g_wts %>%
         filter(aiddata_activity_codes %in% act) %>%
         select(-aiddata_activity_codes)
@@ -141,7 +150,9 @@ target_coder <- function(dat,
                          coalesced_purpose = FALSE){
   
   ## Make sure dollar amounts are numeric
-  dat$commitment_amount_usd_constant <- as.numeric(as.character(dat$commitment_amount_usd_constant))
+  dat$commitment_amount_usd_constant <- as.numeric(
+    as.character(dat$commitment_amount_usd_constant)
+    )
   
   ## Logical check of whether to use coalesced purpose codes
   if(coalesced_purpose == TRUE){
@@ -152,11 +163,15 @@ target_coder <- function(dat,
       rename(coalesced_purpose_code = code_target)
 
     dat$coalesced_purpose_code <- as.character(dat$coalesced_purpose_code)
-    combined_t_wts$coalesced_purpose_code <- as.character(combined_t_wts$coalesced_purpose_code)
+    combined_t_wts$coalesced_purpose_code <- as.character(
+      combined_t_wts$coalesced_purpose_code
+      )
     
     ## Merge, multiply by dollar amounts, select
-    merged <- left_join(dat, combined_t_wts, by = "coalesced_purpose_code") %>%
-      #mutate_each(funs(.*commitment_amount_usd_constant), starts_with("t_")) %>%
+    merged <- left_join(dat, combined_t_wts, 
+                        by = "coalesced_purpose_code") %>%
+      # mutate_each(funs(.*commitment_amount_usd_constant), 
+      #             starts_with("t_")) %>%
       mutate_at(vars(starts_with("t_")),
                 funs(.*commitment_amount_usd_constant)) %>%
       select(aiddata_id, t_1.1:t_17.19)
@@ -176,8 +191,10 @@ target_coder <- function(dat,
       rename(aiddata_activity_codes = code_target)
     
     ## Merge, multiply by dollar amounts, select
-    merged <- left_join(dat, combined_t_wts, by = "aiddata_activity_codes") %>%
-      #mutate_each(funs(.*commitment_amount_usd_constant), starts_with("t_")) %>%
+    merged <- left_join(dat, combined_t_wts, 
+                        by = "aiddata_activity_codes") %>%
+      # mutate_each(funs(.*commitment_amount_usd_constant), 
+      #             starts_with("t_")) %>%
       mutate_at(vars(starts_with("t_")),
                 funs(.*commitment_amount_usd_constant)) %>%
       select(aiddata_id, t_1.1:t_17.19)
@@ -214,7 +231,7 @@ target_coder <- function(dat,
         
       }
       
-      ## Create a matrix of the activity-to-goal weights for relevant activities
+      ## Create matrix of activity-to-goal weights for relevant activities
       links <- combined_t_wts %>%
         filter(aiddata_activity_codes %in% act) %>%
         select(-aiddata_activity_codes)
