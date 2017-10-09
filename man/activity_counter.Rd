@@ -15,4 +15,3 @@ Returns a count of unique activities tagged to a project.
 \examples{
 activity_counter(project = aiddata_core$aiddata_activity_codes[1])
 }
-

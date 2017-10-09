@@ -27,4 +27,3 @@ Get amount for equal splits of World Bank IBRD-IDA projects across locations. Th
 \examples{
 dollars2shape(shapefile = shape, max_precision = 2, amt_var = "commitments", sectors = c(120, 121))
 }
-

@@ -12,4 +12,3 @@ Get list of English words.
 \examples{
 getEnglishWords()
 }
-

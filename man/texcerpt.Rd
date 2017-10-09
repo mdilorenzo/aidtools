@@ -19,4 +19,3 @@ This function extracts words and their surrounding text. Note that this only wor
 \examples{
 texcerpt(example, words = c("data", "statistic"), n = 10)
 }
-

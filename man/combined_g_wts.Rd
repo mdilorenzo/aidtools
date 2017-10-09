@@ -15,4 +15,3 @@ Matrix of weights for activity code to SDG links
 data(combined_g_wts)
 }
 \keyword{datasets}
-

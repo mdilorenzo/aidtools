@@ -23,4 +23,3 @@ Get count of new World Bank IBRD-IDA projects across locations by year. The retu
 \examples{
 projects2shape(shapefile = shape, max_precision = 2, sectors = c(120, 121))
 }
-

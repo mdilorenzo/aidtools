@@ -19,4 +19,3 @@ This function checks if given percentage of text is in a certain language where 
 \examples{
 languagecheck(text = some_text, language_list = eng_words, threshold = 2/3)
 }
-

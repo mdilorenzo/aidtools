@@ -25,4 +25,3 @@ Get amount for equal splits of projects across locations, split across years of 
 \examples{
 psplityear()
 }
-

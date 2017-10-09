@@ -21,4 +21,3 @@ Get amount for equal splits of projects across locations
 \examples{
 psplit()
 }
-

@@ -19,4 +19,3 @@ This function turns cross-section units into cross-sectional, time-series units.
 \examples{
 tsbind(df = data_frame, begin = 2000, end = 2010)
 }
-

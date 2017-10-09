@@ -20,4 +20,3 @@ sectorfilter(sectors = sector, proj = data_name)
 \keyword{object}
 \keyword{projects}
 \keyword{projects.}
-

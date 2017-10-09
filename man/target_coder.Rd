@@ -19,4 +19,3 @@ Get project-level estimates of contributions to SDG targets. This function requi
 \examples{
 sdg_target_coder(dat = aiddata_core_research_release)
 }
-

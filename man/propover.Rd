@@ -21,4 +21,3 @@ Calculate percentage of overlap between two polygons contained in SpatialPolygon
 \examples{
 propover()
 }
-

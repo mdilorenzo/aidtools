@@ -15,4 +15,3 @@ Splits AidData project commitment amounts evenly across activities.
 \examples{
 activitysplit(dat = dat)
 }
-

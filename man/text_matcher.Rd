@@ -21,4 +21,3 @@ text_matcher() returns logical vector indicating whether each element in x match
 \examples{
 textmatcher(x = c("hello", "not hello"), include_text = "hello", exclude_text = "not hello", ignore_case = TRUE)
 }
-
