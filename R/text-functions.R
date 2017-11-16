@@ -70,3 +70,30 @@ languagecheck <- function(text, language_list, threshold = 2/3){
   
 }
 
+
+
+#' A Function for Splitting Apart Character Separated Values
+#'
+#' This function splits character-separated values.
+#' @param x Character string with character-separated values.
+#' @param char Character separating values.
+#' @keywords 
+#' @export
+#' @examples
+#' untangle(c("400|500|600"), char = "|")
+
+untangle <- function(x, char = ",") {
+  
+  x %>%
+    unlist() %>%
+    c() %>%
+    .[!is.na(.)] %>%
+    as.character() %>%
+    strsplit(split = char, fixed = T) %>%
+    unlist() %>%
+    trimws() %>%
+    unique()
+  
+}
+
+

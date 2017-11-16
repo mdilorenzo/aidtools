@@ -262,3 +262,163 @@ target_coder <- function(dat,
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#' A Function for Getting SDG Estimates using Direct Manual Coding of SDGs
+#'
+#' Get project-level estimates of contributions to SDG goals targets using the direct coding method. 
+#' @param codes Column / row entry containing SDG codes. 
+#' @param project_value Column / row entry containing SDG codes
+#' @param target_level Logical. If TRUE, provides target-level estimates. Defaults to FALSE.
+#' @keywords 
+#' @export 
+#' @examples
+#' sdg_direct_single(codes = data$sdg_codes[1], project_value = data$project_value[1])
+
+sdg_direct_single <- function(codes, 
+                              project_value,
+                              target_level = FALSE) {
+  
+  ## Replace missing values as zero
+  project_value <- ifelse(is.na(project_value), 0, project_value)
+  
+  ## Return zeroes for Do Not Code cases
+  if(codes == "DNC"){
+    
+    return(
+      ifelse(target_level == TRUE,
+             return(c(rep(NA, 187))),
+             return(c(rep(NA, 18))))
+    )
+    
+  } 
+  
+  else 
+    
+  {
+    
+    ## 'Untangle' codes
+    sdg_codes <- untangle(codes, char = "|")
+    
+    ## Split value of project evenly
+    split_value <- project_value / length(sdg_codes)
+    
+    ## Assign to column in sdgs data frame
+    sdgs$value <- ifelse(sdgs$sdg_code %in% sdg_codes, 1, 0) * split_value
+    
+    ## Collect target-level estimates
+    target_estimates <- sdgs$value
+    
+    ## Collect goal-level estimates
+    goal_estimates <- sdgs %>%
+      group_by(goals) %>%
+      summarise(value = sum(value, na.rm = T)) %>%
+      select(value) %>%
+      unlist() %>%
+      c()
+    
+    ## Name columns
+    names(target_estimates) <- sdgs$sdg_code
+    names(goal_estimates) <- c(paste0("sdg_", 1:17), "ENV")
+    
+    ## Decide what gets returned
+    ifelse(target_level,
+           return(target_estimates),
+           return(goal_estimates)
+    )
+  }
+  
+}
+
+
+
+
+
+
+#' A Function for Getting SDG Estimates using Direct Manual Coding of SDGs
+#'
+#' This function uses the sdg_direct_single function in a loop for application to a full data set.
+#' @param sdg_data Data frame object.
+#' @param code_column Quoted name of column containing SDG codes.
+#' @param value_column Quoted name of column containing financial values.
+#' @param target Logical. If TRUE, provides target-level estimates. Defaults to FALSE.
+#' @keywords 
+#' @export 
+#' @examples
+#' sdg_direct()
+
+sdg_direct <- function(sdg_data, 
+                       code_column,
+                       value_column,
+                       target = FALSE) {
+  
+  placeholder <- matrix(NA,
+                        nrow = nrow(sdg_data),
+                        ncol = ifelse(target, 187, 18))
+  
+  for(i in 1:nrow(placeholder)) {
+    
+    placeholder[i, ] <- as.numeric(
+      c(sdg_direct_single(sdg_data[[code_column]][i], 
+                          sdg_data[[value_column]][i], 
+                          target_level = target)))
+    
+  }
+  
+
+  ## Create placeholder matrix
+  placeholder <- as.data.frame(placeholder)
+  
+  ## Replace column names depending on target- vs. goal-level
+  if(target){
+    
+    colnames(placeholder) <- c(paste0("t_",
+                                      sdgs$sdg_code[-length(sdgs$sdg_code)]),
+                               "ENV")
+    
+  } else {
+    
+    colnames(placeholder) <- c(paste0("sdg_", 1:17), "ENV")
+    
+  }
+  
+  ## Bind with base data
+  placeholder <- cbind(sdg_data,
+                       placeholder)
+  
+  return(placeholder)
+  
+}
+
+
+
+
