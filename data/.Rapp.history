@@ -1,0 +1,4 @@
+load("/Users/matthewdilorenzo/Documents/r-packages/aidtools/data/combined-goal-weights.rda")
+ls()
+View(combind_g_wts)
+View(combined_g_wts)

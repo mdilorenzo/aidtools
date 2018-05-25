@@ -241,13 +241,13 @@ projects2shape <- function(shapefile,
   }
   
   ## Filter based on status
-  proj <- proj %>% filter(status %in% project_status)
+  proj <- proj %>% dplyr::filter(status %in% project_status)
   
   ## Assign a shortcut
   id <- "project_id"
   
   ## Check if specific sectors needed and filter with sectorfilter()
-  if(length(sectors) > 1){
+  if(!sectors == "all"){
     proj <- sectorfilter(sectors = sectors, projects = proj)
     loc <- loc[loc$project_id %in% unique(proj$project_id), ]
   }
@@ -316,7 +316,9 @@ projects2shape <- function(shapefile,
 sectorfilter <- function(sectors, projects){
   
     sectors <- as.character(sectors)
-    sector_codes <- strsplit(projects$ad_sector_codes, "\\|")
+    sector_codes <- strsplit(as.character(projects[["ad_sector_codes"]]), 
+                             "|",
+                             fixed = TRUE)
     keep_project <- c()
     
     for(i in 1:nrow(projects)){
