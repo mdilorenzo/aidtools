@@ -1,6 +1,22 @@
 ## Basic custom R functions to load
 
 
+## Count non-missing values of variable
+
+count_nonmissing <- function(variable) {
+  
+  length(variable[!is.na(variable)])
+  
+}
+
+## Standard error of proportion calculator
+
+prop_se <- function(p, n){
+  
+  sqrt((p * (1 - p)) / n )
+  
+}
+
 ## Plus-minus function
 
 plusmin <- function(value, by){
@@ -395,7 +411,7 @@ first_word <- function(x, separator = " "){
 
 wdi_region_terms <- function(){
   
-  "Arab World|World|income|develop|IBRD|islands|world|South Asia|fragile|small states|East Asia|demograph|poor|indebt|Middle|OECD|classified|sub-sah|North America|South America|Latin America|&|European Union|area|Baltics|IDA blend|IDA only|IDA total"
+  "Arab World|World|income|develop|IBRD|islands|world|South Asia|fragile|small states|East Asia|demograph|poor|indebt|Middle|OECD|classified|sub-sah|North America|South America|Latin America|&|European Union|area|Baltics|IDA blend|IDA only|IDA total|Small states|Fragile and conflict affected situations|Sub-Saharan"
   
 }
 
@@ -776,6 +792,28 @@ pcomms_save <- function(p, fig_name, ...){
   zip(zipfile = paste0(fig_name, ".zip"),
       files = file_names)
   
+  ## Delete extra files to just leave .jpeg and .zip
+  files_to_delete <- list.files() %>%
+    .[grepl(fig_name, .)] %>%
+    .[!grepl(".jpeg|.zip", .)]
+  
+  unlink(files_to_delete, recursive = TRUE)
+ 
+   
 }
 
+
+
+# files <- c("ch-2-financial_diplomacy.jpeg",
+#            "ch-2-financial_diplomacy.png",
+#            "ch-2-financial_diplomacy.eps",
+#            "ch-2-financial_diplomacy-data")
+# 
+# ?unlink
+# 
+# fig_name = "ch-2-confucius_institutes"
+# 
+# list.files() %>%
+#   .[grepl(fig_name, .)] %>%
+#   .[!grepl(".jpeg|.zip", .)]
 
